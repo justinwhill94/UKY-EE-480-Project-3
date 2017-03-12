@@ -1,0 +1,25 @@
+NOARG := 0:4 .this:12
+.alias NOARG Add And Dup Load Lt Or Ret Store Sub Sys Test Xor
+
+Call .immed ?((. & 0xf000) == (.immed & 0xf000)) := 1:4 (.immed & 0x0fff):12
+Call .immed := 1:4 (.immed & 0x0fff):12 7:4 ((.immed & 0xf000)>>12):12
+
+Get .immed := 2:4 .immed:12
+
+JumpF .immed ?((. & 0xf000) == (.immed & 0xf000)) := 3:4 (.immed & 0x0fff):12
+JumpF .immed := 7:4 ((.immed & 0xf000) >> 12):12 3:4 (.immed & 0x0fff):12
+
+Jump .immed ?((. & 0xf000) == (.immed & 0xf000)) := 4:4 (.immed & 0x0fff):12
+Jump .immed := 7:4 ((.immed & 0xf000) >> 12):12 4:4 (.immed & 0x0fff):12
+
+JumpT .immed ?((. & 0xf000) == (.immed & 0xf000)) := 5:4 (.immed & 0x0fff):12
+JumpT .immed := 7:4 ((.immed & 0xf000) >> 12):12 5:4 (.immed & 0x0fff):12
+
+Pop .immed := 6:4 .immed:12
+Pre .immed := 7:4 ((.immed & 0xf000) >> 12):12
+Push .immed := 7:4 ((.immed & 0xf000) >> 12):12 8:4 (.immed & 0x0fff):12
+Put .immed := 9:4 .immed:12
+
+.segment .text 8 0x1000000 0 .VMEM
+.segment .data 8 0x1000000 0 .VMEM
+.const 0 .lowfirst ; was wrong endian
