@@ -47,7 +47,7 @@
 `define Xor 8'd2048
 
 // -----------------------------State #'s-----------------------------------------
-`define START 4'd10
+`define Start 4'd10
 
 
 // -----------------------------Main Processor Module-----------------------------
@@ -57,6 +57,7 @@ input reset, clk;
 
 reg `WORD pc =0;
 reg `STATE s = `START;
+
 
 always @(reset)
 begin
@@ -68,7 +69,43 @@ end
 always @(posedge clk)
 begin
 	case (s)
+		`Start
+		`NoArg: 
+			begin
+			end
+		`Call: 
+			begin
+			end
+		`Get: 
+			begin
+			end
+		`JumpF: 
+			begin
+			end
+		`Jump: 
+			begin
+			end
+		`JumpT: 
+			begin
+			end
+		`Pop: 
+			begin
+			end
+		`Pre: 
+			begin
+			end
+		`Push: 
+			begin
+			end
+		`Put: 
+			begin
+			end
 		default: halt <= 1;	
+
+
+
+
+
 	endcase
 end
 end module
