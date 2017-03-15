@@ -9,6 +9,7 @@
 //N.S.
 `define WORDSIZE [15:0]
 `define OPCODE [15:12]
+`define ARG [11:0]
 //`define DST [11:6]
 `define REGSIZE [255:0]
 `define SP [7:0]      //stack pointer, i point to one of 256 words in the MEM
@@ -33,18 +34,18 @@
 
 // ----------------------------No Arg Opcode---------------------------------------
 
-`define Add 8'd1
-`define And 8'd2
-`define Dup 8'd4
-`define Load 8'd8
-`define Lt 8'd16
-`define Or 8'd32
-`define Ret 8'd64
-`define Store 8'd128
-`define Sub 8'd256
-`define Sys 8'd512
-`define Test 8'd1024
-`define Xor 8'd2048
+`define Add 12'd1
+`define And 12'd2
+`define Dup 12'd4
+`define Load 12'd8
+`define Lt 12'd16
+`define Or 12'd32
+`define Ret 12'd64
+`define Store 12'd128
+`define Sub 12'd256
+`define Sys 12'd512
+`define Test 12'd1024
+`define Xor 12'd2048
 
 // -----------------------------State #'s-----------------------------------------
 `define Start 4'd10
@@ -57,6 +58,7 @@ input reset, clk;
 
 reg `WORD pc =0;
 reg `STATE s = `START;
+reg `WORD regfile `REGSIZE;
 
 
 always @(reset)
@@ -72,6 +74,46 @@ begin
 		`Start
 		`NoArg: 
 			begin
+				reg `WORD ArgOp = s `ARG;
+				case (ArgOp)
+					`Add:
+						begin
+						end
+					`And:
+						begin
+						end
+					`Dup:
+						begin
+						end
+					`Load:
+						begin
+						end
+					`Lt:
+						begin
+						end
+					`Or:
+						begin
+						end
+					`Ret:
+						begin
+						end
+					`Store:
+						begin
+						end
+					`Sub:
+						begin
+						end
+					`Sys:
+						begin
+						end
+					`Test:
+						begin
+						end
+					`Xor:
+						begin
+						end
+				endcase
+
 			end
 		`Call: 
 			begin
