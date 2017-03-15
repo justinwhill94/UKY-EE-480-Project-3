@@ -159,3 +159,30 @@ begin
 end
 end module
 
+module processor_tb;
+	reg [15:0] A;
+	reg [15:0] B;
+	reg [16:0] result;
+	reg [16:0] orc_result;
+	reg error;
+//------------------------
+	reg halt;
+	reg reset;
+	reg clk;
+//------------------------
+	processor uut(halt,reset,clk);
+	always begin	#10 clk = ~clk;	end
+
+	initial begin;
+		// make some word in MEM = A;
+		// make some word in MEM = B;
+		result = 0;
+		orc_result = 0;
+		error = 0;
+	end
+
+	initial begin 
+		
+		orc_result = 
+
+
