@@ -1,5 +1,15 @@
-NOARG := 0:4 .this:12
-.alias NOARG Add And Dup Load Lt Or Ret Store Sub Sys Test Xor
+Add := 0:4 1:12
+And := 0:4 2:12
+Dup := 0:4 4:12
+Load := 0:4 8:12
+Lt := 0:4 16:12
+Or := 0:4 32:12
+Ret := 0:4 64:12
+Store := 0:4 128:12
+Sub := 0:4 256:12
+Sys := 0:4 512:12
+Test := 0:4 1024:12
+Xor:= 0:4 2048:12
 
 Call .immed ?((. & 0xf000) == (.immed & 0xf000)) := 1:4 (.immed & 0x0fff):12
 Call .immed := 1:4 (.immed & 0x0fff):12 7:4 ((.immed & 0xf000)>>12):12
