@@ -12,8 +12,8 @@
 `define ARG [11:0]
 //`define DST [11:6]
 `define REGSIZE [255:0]
-`define SP [7:0]      //stack pointer, i point to one of 256 words in the MEM
-`define PC [15:0]     // i point to one of 16 bits in the addressed WORD
+`define SPSIZE [7:0]      //stack pointer, i point to one of 256 words in the MEM
+`define PCSIZE [15:0]     // i point to one of 16 bits in the addressed WORD
 `define TorF          // im a 0bit boolean that keeps track of conditionals (TRUE OR FALSE)
 `define PRE [3:0]     // like in P2 i alow for 16 bit imeds
 `define isPREld       // im a 1 bit bolean keeping track if PRE is loaded
@@ -56,9 +56,10 @@ module processor(halt, reset, clk);
 output reg halt;
 input reset, clk;
 
-reg `WORD pc =0;
+reg `PCSIZE pc =0;
+reg `SPSIZE sp = 0;
 reg `STATE s = `START;
-reg `WORD regfile `REGSIZE;
+reg `WORDSIZE regfile `REGSIZE;
 
 
 always @(reset)
@@ -74,10 +75,16 @@ begin
 		`Start
 		`NoArg: 
 			begin
-				reg `WORD ArgOp = s `ARG;
+				reg `WORDSIZE ArgOp = s `ARG;
 				case (ArgOp)
 					`Add:
 						begin
+							reg `REGSIZE dest = sp-1;
+							reg `REGSIZE src = sp;
+							sp = sp-1;
+							reg `WORDSIZE destV = regfile[dest];
+							reg `WORDSIZE srcV = regfile[src];
+							regfile[dest] = destV + srcV;
 						end
 					`And:
 						begin
