@@ -12,6 +12,7 @@
 `define ARG [11:0]
 //`define DST [11:6]
 `define REGSIZE [255:0]
+`define MEMSIZE [65535:0]
 `define SPSIZE [7:0]      //stack pointer, i point to one of 256 words in the MEM
 `define PCSIZE [15:0]     // i point to one of 16 bits in the addressed WORD
 `define TorF          // im a 0bit boolean that keeps track of conditionals (TRUE OR FALSE)
@@ -60,6 +61,7 @@ reg `PCSIZE pc =0;
 reg `SPSIZE sp = 0;
 reg `STATE s = `START;
 reg `WORDSIZE regfile `REGSIZE;
+reg `WORDSIZE mainmem `MEMSIZE;
 
 
 always @(reset)
@@ -79,68 +81,111 @@ begin
 				case (ArgOp)
 					`Add:
 						begin
+							/*
 							reg `REGSIZE dest = sp-1;
 							reg `REGSIZE src = sp;
 							sp = sp-1;
 							reg `WORDSIZE destV = regfile[dest];
 							reg `WORDSIZE srcV = regfile[src];
 							regfile[dest] = destV + srcV;
-						end
+							*/
+							regfile[sp-1] <= regfile[sp-1] + regfile[sp];
+							sp <= sp-1;
+							s <= `Start;
+						end1
 					`And:
 						begin
+							/*
 							reg `REGSIZE dest = sp-1;
 							reg `REGSIZE src = sp;
 							sp = sp-1;
 							reg `WORDSIZE destV = regfile[dest];
 							reg `WORDSIZE srcV = regfile[src];
 							regfile[dest] = destV & srcV;
+							*/
+							regfile[sp-1] <= regfile[sp-1] & regfile[sp];
+							sp <= sp-1;
+							s <= `Start;
 						end
 					`Dup:
 						begin
+							/*
 							reg `REGSIZE dest = sp+1;
 							reg `REGSIZE src = sp;
 							sp = sp+1;
 							reg `WORDSIZE srcV = regfile[src];
 							regfile[dest] = srcV;
+							*/
+							regfile[sp + 1] <= regfile[sp];
+							sp <= sp + 1;
+							s <= `Start;
 						end
 					`Load:
 						begin
+							/*
+							reg `REGSIZE dest = sp;
+							reg `WORDSIZE destV = regfile[dest];
+							regfile[dest] = mainmem[destV];
+							*/
+							regfile[sp] <= mainmem[regfile[sp]];
+							sp <= sp+1;
+							s <= `Start;
 						end
 					`Lt:
 						begin
+							/*
 							reg `REGSIZE dest = sp-1;
 							reg `REGSIZE src = sp;
 							sp = sp-1;
 							reg `WORDSIZE destV = regfile[dest];
 							reg `WORDSIZE srcV = regfile[src];
 							regfile[dest] = destV < srcV;
+							*/
+						   regfile[sp-1] <= regfile[sp-1] < regfile[sp];
+						   sp <= sp-1;
+						   s <= `Start;
 						end
 					`Or:
 						begin
+							/*
 							reg `REGSIZE dest = sp-1;
 							reg `REGSIZE src = sp;
 							sp = sp-1;
 							reg `WORDSIZE destV = regfile[dest];
 							reg `WORDSIZE srcV = regfile[src];
 							regfile[dest] = destV | srcV;
+							*/
+						   regfile[sp -1] <= regfile[sp -1] | regfile[sp];
+						   sp <= sp -1;
+						   s <= `Start;
 						end
 					`Ret:
 						begin
+							/*
 							reg `REGSIZE src = sp;
 							sp = sp-1;
 							pc = regfile[src];
+							*/
+						   pc <= regfile[sp];
+						   sp <= sp-1;
+						   s <= `Start;
 						end
 					`Store:
 						begin
 						end
 					`Sub:
 						begin
+							/*
 							reg `REGSIZE dest = sp-1;
 							reg `REGSIZE src = sp;
 							sp = sp-1;
 							reg `WORDSIZE destV = regfile[dest];
 							reg `WORDSIZE srcV = regfile[src];
 							regfile[dest] = destV - srcV;
+							*/
+						   regfile[sp -1] <= regfile[sp -1] - regfile[sp];
+						   sp <= sp-1;
+						   s <= `Start;
 						end
 					`Sys:
 						begin
@@ -150,12 +195,17 @@ begin
 						end
 					`Xor:
 						begin
+							/*
 							reg `REGSIZE dest = sp-1;
 							reg `REGSIZE src = sp;
 							sp = sp-1;
 							reg `WORDSIZE destV = regfile[dest];
 							reg `WORDSIZE srcV = regfile[src];
 							regfile[dest] = destV ^ srcV;
+							*/
+						   regfile[sp -1] <= regfile[sp -1] ^ regfile[sp];
+						   sp <= sp-1;
+						   s <= `Start;
 						end
 				endcase
 
