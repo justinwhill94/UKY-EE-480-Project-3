@@ -88,27 +88,59 @@ begin
 						end
 					`And:
 						begin
+							reg `REGSIZE dest = sp-1;
+							reg `REGSIZE src = sp;
+							sp = sp-1;
+							reg `WORDSIZE destV = regfile[dest];
+							reg `WORDSIZE srcV = regfile[src];
+							regfile[dest] = destV & srcV;
 						end
 					`Dup:
 						begin
+							reg `REGSIZE dest = sp+1;
+							reg `REGSIZE src = sp;
+							sp = sp+1;
+							reg `WORDSIZE srcV = regfile[src];
+							regfile[dest] = srcV;
 						end
 					`Load:
 						begin
 						end
 					`Lt:
 						begin
+							reg `REGSIZE dest = sp-1;
+							reg `REGSIZE src = sp;
+							sp = sp-1;
+							reg `WORDSIZE destV = regfile[dest];
+							reg `WORDSIZE srcV = regfile[src];
+							regfile[dest] = destV < srcV;
 						end
 					`Or:
 						begin
+							reg `REGSIZE dest = sp-1;
+							reg `REGSIZE src = sp;
+							sp = sp-1;
+							reg `WORDSIZE destV = regfile[dest];
+							reg `WORDSIZE srcV = regfile[src];
+							regfile[dest] = destV | srcV;
 						end
 					`Ret:
 						begin
+							reg `REGSIZE src = sp;
+							sp = sp-1;
+							pc = regfile[src];
 						end
 					`Store:
 						begin
 						end
 					`Sub:
 						begin
+							reg `REGSIZE dest = sp-1;
+							reg `REGSIZE src = sp;
+							sp = sp-1;
+							reg `WORDSIZE destV = regfile[dest];
+							reg `WORDSIZE srcV = regfile[src];
+							regfile[dest] = destV - srcV;
 						end
 					`Sys:
 						begin
@@ -118,6 +150,12 @@ begin
 						end
 					`Xor:
 						begin
+							reg `REGSIZE dest = sp-1;
+							reg `REGSIZE src = sp;
+							sp = sp-1;
+							reg `WORDSIZE destV = regfile[dest];
+							reg `WORDSIZE srcV = regfile[src];
+							regfile[dest] = destV ^ srcV;
 						end
 				endcase
 
@@ -150,11 +188,6 @@ begin
 			begin
 			end
 		default: halt <= 1;	
-
-
-
-
-
 	endcase
 end
 end module
