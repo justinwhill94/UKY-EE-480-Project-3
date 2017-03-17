@@ -1,0 +1,47 @@
+sik.v:71: syntax error
+sik.v:73: error: invalid module item.
+sik.v:74: syntax error
+sik.v:74: error: Invalid module instantiation
+sik.v:75: error: Invalid module instantiation
+sik.v:76: error: Invalid module instantiation
+sik.v:99: error: invalid module item.
+sik.v:100: syntax error
+sik.v:100: error: Invalid module instantiation
+sik.v:101: error: Invalid module instantiation
+sik.v:102: error: Invalid module instantiation
+sik.v:114: error: Invalid module instantiation
+sik.v:115: error: Invalid module instantiation
+sik.v:126: error: invalid module item.
+sik.v:127: syntax error
+sik.v:127: error: Invalid module instantiation
+sik.v:128: error: Invalid module instantiation
+sik.v:137: error: invalid module item.
+sik.v:138: syntax error
+sik.v:138: error: Invalid module instantiation
+sik.v:139: error: Invalid module instantiation
+sik.v:151: error: invalid module item.
+sik.v:152: syntax error
+sik.v:152: error: Invalid module instantiation
+sik.v:153: error: Invalid module instantiation
+sik.v:165: error: invalid module item.
+sik.v:166: syntax error
+sik.v:166: error: Invalid module instantiation
+sik.v:167: error: Invalid module instantiation
+sik.v:176: error: invalid module item.
+sik.v:177: syntax error
+sik.v:177: error: Invalid module instantiation
+sik.v:178: error: Invalid module instantiation
+sik.v:193: error: invalid module item.
+sik.v:194: syntax error
+sik.v:194: error: Invalid module instantiation
+sik.v:195: error: Invalid module instantiation
+sik.v:213: error: invalid module item.
+sik.v:214: syntax error
+sik.v:214: error: Invalid module instantiation
+sik.v:215: error: Invalid module instantiation
+sik.v:240: error: invalid module item.
+sik.v:241: syntax error
+sik.v:241: error: Invalid module instantiation
+sik.v:249: error: invalid module item.
+sik.v:250: syntax error
+

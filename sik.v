@@ -15,9 +15,10 @@
 `define MEMSIZE [65535:0]
 `define SPSIZE [7:0]      //stack pointer, i point to one of 256 words in the MEM
 `define PCSIZE [15:0]     // i point to one of 16 bits in the addressed WORD
-`define TorF          // im a 0bit boolean that keeps track of conditionals (TRUE OR FALSE)
-`define PRE [3:0]     // like in P2 i alow for 16 bit imeds
-`define isPREld       // im a 1 bit bolean keeping track if PRE is loaded
+//`define TorF          // im a 0bit boolean that keeps track of conditionals (TRUE OR FALSE)
+//`define PRE [3:0]     // like in P2 i alow for 16 bit imeds
+//`define isPREld       // im a 1 bit bolean keeping track if PRE is loaded
+`define STATESIZE [3:0]
 //N.S
 
 // -----------------------------Opcode Values-------------------------------------
@@ -59,26 +60,32 @@ input reset, clk;
 
 reg `PCSIZE pc =0;
 reg `SPSIZE sp = 0;
-reg `STATE s = `START;
+reg `STATESIZE s = `Start;
 reg `WORDSIZE regfile `REGSIZE;
 reg `WORDSIZE mainmem `MEMSIZE;
+reg [3:0] preReg;
+reg preLoaded;
+reg
 
 
 always @(reset)
 begin
-	halt = 0;
-	pc = 0;
-	s = `START;
+	halt <= 0;
+	pc <= 0;
+	s <= `Start;
+	preLoaded <= 0;
 end
 
 always @(posedge clk)
 begin
 	case (s)
-		`Start
+		`Start:
+			begin
+			end
 		`NoArg: 
 			begin
-				reg `WORDSIZE ArgOp = s `ARG;
-				case (ArgOp)
+				//reg `WORDSIZE ArgOp = s `ARG;
+				case (s `ARG)
 					`Add:
 						begin
 							/*
@@ -230,6 +237,8 @@ begin
 			end
 		`Pre: 
 			begin
+				preReg <= (s `ARG) >> 12;
+				preLoaded <= 1;
 			end
 		`Push: 
 			begin
@@ -242,6 +251,7 @@ begin
 end
 end module
 
+/*
 module processor_tb;
 	reg [15:0] A;
 	reg [15:0] B;
@@ -267,5 +277,5 @@ module processor_tb;
 	initial begin 
 		
 		orc_result = 
-
+*/
 
