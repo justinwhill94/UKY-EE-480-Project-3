@@ -252,31 +252,25 @@ initial begin
 end
 endmodule
 
-/*
+
+
+//===========================TEST BENCH====================================
 module processor_tb;
-	reg [15:0] A;
-	reg [15:0] B;
-	reg [16:0] result;
-	reg [16:0] orc_result;
-	reg error;
 //------------------------
-	reg halt;
-	reg reset;
-	reg clk;
+	reg reset = 0,clk = 0;
 //------------------------
-	processor uut(halt,reset,clk);
-	always begin	#10 clk = ~clk;	end
-
+	wire halt;
+	always begin #20 clk = ~clk end; // clock change every 20 somthings
+	processor uut(halt,reset,clk); // instantiate the verilog module
 	initial begin;
-		// make some word in MEM = A;
-		// make some word in MEM = B;
-		result = 0;
-		orc_result = 0;
-		error = 0;
+		$dumpfile;
+		$dumpfile(0,uut);
+		//------------
+		#20 reset = 0;
+		#20 reset = 1;
+		//------------
 	end
-
-	initial begin 
-		
-		orc_result = 
-*/
+endmodule
+//==========================END TEST BENCH=================================
+//N.S
 
