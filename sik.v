@@ -61,7 +61,7 @@ input reset, clk;
 reg `PCSIZE pc =0;
 reg `SPSIZE sp = 0;
 reg `STATESIZE s = `Start;
-reg `WORDSIZE regfile `REGSIZE;
+reg `WORDSIZE stack `REGSIZE;
 reg `WORDSIZE mainmem `MEMSIZE;
 reg [3:0] preReg;
 reg preLoaded;
@@ -93,9 +93,9 @@ begin
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
-							regfile[dest] = regfile[dest] + regfile[src];
+							stack[dest] = stack[dest] + stack[src];
 							*/
-							regfile[sp-1] = regfile[sp-1] + regfile[sp];
+							stack[sp-1] = stack[sp-1] + stack[sp];
 							sp = sp-1;
 							s = `Start;
 						end
@@ -105,9 +105,9 @@ begin
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
-							regfile[dest] = regfile[dest] & regfile[src];
+							stack[dest] = stack[dest] & stack[src];
 							*/
-							regfile[sp-1] = regfile[sp-1] & regfile[sp];
+							stack[sp-1] = stack[sp-1] & stack[sp];
 							sp = sp-1;
 							s = `Start;
 						end
@@ -117,9 +117,9 @@ begin
 							dest = sp+1;
 							src = sp;
 							sp = sp+1;
-							regfile[dest] = regfile[src];
+							stack[dest] = stack[src];
 							*/
-							regfile[sp + 1] = regfile[sp];
+							stack[sp + 1] = stack[sp];
 							sp = sp + 1;
 							s = `Start;
 						end
@@ -128,9 +128,9 @@ begin
 							/*
 							dest = sp;
 							sp = sp + 1;
-							regfile[dest] = mainmem[regfile[dest]];
+							stack[dest] = mainmem[stack[dest]];
 							*/
-							regfile[sp] = mainmem[regfile[sp]];
+							stack[sp] = mainmem[stack[sp]];
 							sp = sp+1;
 							s = `Start;
 						end
@@ -140,9 +140,9 @@ begin
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
-							regfile[dest] = regfile[dest] < regfile[src];
+							stack[dest] = stack[dest] < stack[src];
 							*/
-						   regfile[sp-1] = regfile[sp-1] < regfile[sp];
+						   stack[sp-1] = stack[sp-1] < stack[sp];
 						   sp = sp-1;
 						   s = `Start;
 						end
@@ -152,9 +152,9 @@ begin
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
-							regfile[dest] = regfile[dest] | regfile[src];
+							stack[dest] = stack[dest] | stack[src];
 							*/
-						   regfile[sp -1] = regfile[sp -1] | regfile[sp];
+						   stack[sp -1] = stack[sp -1] | stack[sp];
 						   sp = sp -1;
 						   s = `Start;
 						end
@@ -163,9 +163,9 @@ begin
 							/*
 							src = sp;
 							sp = sp-1;
-							pc = regfile[src];
+							pc = stack[src];
 							*/
-						   pc = regfile[sp];
+						   pc = stack[sp];
 						   sp = sp-1;
 						   s = `Start;
 						end
@@ -178,9 +178,9 @@ begin
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
-							regfile[dest] = regfile[dest] - regfile[src];
+							stack[dest] = stack[dest] - stack[src];
 							*/
-						   regfile[sp -1] = regfile[sp -1] - regfile[sp];
+						   stack[sp -1] = stack[sp -1] - stack[sp];
 						   sp = sp-1;
 						   s = `Start;
 						end
@@ -197,9 +197,9 @@ begin
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
-							regfile[dest] = regfile[dest] ^ regfile[src];
+							stack[dest] = stack[dest] ^ stack[src];
 							*/
-						   regfile[sp -1] = regfile[sp -1] ^ regfile[sp];
+						   stack[sp -1] = stack[sp -1] ^ stack[sp];
 						   sp = sp-1;
 						   s = `Start;
 						end
@@ -238,6 +238,17 @@ begin
 			end
 		default: halt = 1;	
 	endcase
+end
+endmodule
+
+module testbench;
+reg reset = 0;
+reg clk = 0;
+reg halt;
+processor Proc(halt, reset, clk);
+
+initial begin
+	$dumpfile
 end
 endmodule
 
