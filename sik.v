@@ -65,7 +65,8 @@ reg `WORDSIZE regfile `REGSIZE;
 reg `WORDSIZE mainmem `MEMSIZE;
 reg [3:0] preReg;
 reg preLoaded;
-reg
+//reg `REGSIZE dest;
+//reg `REGSIZE src;
 
 
 always @(reset)
@@ -89,93 +90,84 @@ begin
 					`Add:
 						begin
 							/*
-							reg `REGSIZE dest = sp-1;
-							reg `REGSIZE src = sp;
+							dest = sp-1;
+							src = sp;
 							sp = sp-1;
-							reg `WORDSIZE destV = regfile[dest];
-							reg `WORDSIZE srcV = regfile[src];
-							regfile[dest] = destV + srcV;
+							regfile[dest] = regfile[dest] + regfile[src];
 							*/
-							regfile[sp-1] <= regfile[sp-1] + regfile[sp];
-							sp <= sp-1;
-							s <= `Start;
-						end1
+							regfile[sp-1] = regfile[sp-1] + regfile[sp];
+							sp = sp-1;
+							s = `Start;
+						end
 					`And:
 						begin
 							/*
-							reg `REGSIZE dest = sp-1;
-							reg `REGSIZE src = sp;
+							dest = sp-1;
+							src = sp;
 							sp = sp-1;
-							reg `WORDSIZE destV = regfile[dest];
-							reg `WORDSIZE srcV = regfile[src];
-							regfile[dest] = destV & srcV;
+							regfile[dest] = regfile[dest] & regfile[src];
 							*/
-							regfile[sp-1] <= regfile[sp-1] & regfile[sp];
-							sp <= sp-1;
-							s <= `Start;
+							regfile[sp-1] = regfile[sp-1] & regfile[sp];
+							sp = sp-1;
+							s = `Start;
 						end
 					`Dup:
 						begin
 							/*
-							reg `REGSIZE dest = sp+1;
-							reg `REGSIZE src = sp;
+							dest = sp+1;
+							src = sp;
 							sp = sp+1;
-							reg `WORDSIZE srcV = regfile[src];
-							regfile[dest] = srcV;
+							regfile[dest] = regfile[src];
 							*/
-							regfile[sp + 1] <= regfile[sp];
-							sp <= sp + 1;
-							s <= `Start;
+							regfile[sp + 1] = regfile[sp];
+							sp = sp + 1;
+							s = `Start;
 						end
 					`Load:
 						begin
 							/*
-							reg `REGSIZE dest = sp;
-							reg `WORDSIZE destV = regfile[dest];
-							regfile[dest] = mainmem[destV];
+							dest = sp;
+							sp = sp + 1;
+							regfile[dest] = mainmem[regfile[dest]];
 							*/
-							regfile[sp] <= mainmem[regfile[sp]];
-							sp <= sp+1;
-							s <= `Start;
+							regfile[sp] = mainmem[regfile[sp]];
+							sp = sp+1;
+							s = `Start;
 						end
 					`Lt:
 						begin
 							/*
-							reg `REGSIZE dest = sp-1;
-							reg `REGSIZE src = sp;
+							dest = sp-1;
+							src = sp;
 							sp = sp-1;
-							reg `WORDSIZE destV = regfile[dest];
-							reg `WORDSIZE srcV = regfile[src];
-							regfile[dest] = destV < srcV;
+							regfile[dest] = regfile[dest] < regfile[src];
 							*/
-						   regfile[sp-1] <= regfile[sp-1] < regfile[sp];
-						   sp <= sp-1;
-						   s <= `Start;
+						   regfile[sp-1] = regfile[sp-1] < regfile[sp];
+						   sp = sp-1;
+						   s = `Start;
 						end
 					`Or:
 						begin
 							/*
-							reg `REGSIZE dest = sp-1;
-							reg `REGSIZE src = sp;
+							dest = sp-1;
+							src = sp;
 							sp = sp-1;
-							reg `WORDSIZE destV = regfile[dest];
-							reg `WORDSIZE srcV = regfile[src];
-							regfile[dest] = destV | srcV;
+							regfile[dest] = regfile[dest] | regfile[src];
 							*/
-						   regfile[sp -1] <= regfile[sp -1] | regfile[sp];
-						   sp <= sp -1;
-						   s <= `Start;
+						   regfile[sp -1] = regfile[sp -1] | regfile[sp];
+						   sp = sp -1;
+						   s = `Start;
 						end
 					`Ret:
 						begin
 							/*
-							reg `REGSIZE src = sp;
+							src = sp;
 							sp = sp-1;
 							pc = regfile[src];
 							*/
-						   pc <= regfile[sp];
-						   sp <= sp-1;
-						   s <= `Start;
+						   pc = regfile[sp];
+						   sp = sp-1;
+						   s = `Start;
 						end
 					`Store:
 						begin
@@ -183,19 +175,18 @@ begin
 					`Sub:
 						begin
 							/*
-							reg `REGSIZE dest = sp-1;
-							reg `REGSIZE src = sp;
+							dest = sp-1;
+							src = sp;
 							sp = sp-1;
-							reg `WORDSIZE destV = regfile[dest];
-							reg `WORDSIZE srcV = regfile[src];
-							regfile[dest] = destV - srcV;
+							regfile[dest] = regfile[dest] - regfile[src];
 							*/
-						   regfile[sp -1] <= regfile[sp -1] - regfile[sp];
-						   sp <= sp-1;
-						   s <= `Start;
+						   regfile[sp -1] = regfile[sp -1] - regfile[sp];
+						   sp = sp-1;
+						   s = `Start;
 						end
 					`Sys:
 						begin
+							halt = 1;
 						end
 					`Test:
 						begin
@@ -203,16 +194,14 @@ begin
 					`Xor:
 						begin
 							/*
-							reg `REGSIZE dest = sp-1;
-							reg `REGSIZE src = sp;
+							dest = sp-1;
+							src = sp;
 							sp = sp-1;
-							reg `WORDSIZE destV = regfile[dest];
-							reg `WORDSIZE srcV = regfile[src];
-							regfile[dest] = destV ^ srcV;
+							regfile[dest] = regfile[dest] ^ regfile[src];
 							*/
-						   regfile[sp -1] <= regfile[sp -1] ^ regfile[sp];
-						   sp <= sp-1;
-						   s <= `Start;
+						   regfile[sp -1] = regfile[sp -1] ^ regfile[sp];
+						   sp = sp-1;
+						   s = `Start;
 						end
 				endcase
 
@@ -237,8 +226,9 @@ begin
 			end
 		`Pre: 
 			begin
-				preReg <= (s `ARG) >> 12;
-				preLoaded <= 1;
+				preReg = (s `ARG) >> 12;
+				preLoaded = 1;
+				s = `Start;
 			end
 		`Push: 
 			begin
@@ -246,10 +236,10 @@ begin
 		`Put: 
 			begin
 			end
-		default: halt <= 1;	
+		default: halt = 1;	
 	endcase
 end
-end module
+endmodule
 
 /*
 module processor_tb;
