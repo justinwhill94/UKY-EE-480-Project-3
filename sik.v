@@ -81,6 +81,8 @@ begin
 	s <= `Start;
 	preLoaded <= 0;
 	torf = 0;
+	$readmemh0(stack);
+	$readmemh1(mainmem);
 end
 
 // Blocking assignments are used to ensure the order of assignments is linear
@@ -89,6 +91,9 @@ begin
 	case (s)
 		`Start:
 			begin
+				ir = mainmem[pc];
+				s = ir `OPCODE;
+				pc = pc+1;
 			end
 		`Start1:
 			begin
