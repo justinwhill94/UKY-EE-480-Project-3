@@ -352,42 +352,22 @@ begin
 end
 endmodule
 
-/*
-module testbench;
-reg reset = 0;
-reg clk = 0;
-reg halt;
-processor Proc(halt, reset, clk);
-
-initial begin
-	$dumpfile
+module processor_tb;
+wire halt;
+reg reset;
+reg clk;
+always 
+begin 
+	#20 clk = ~clk; 
+end // clock change every 20 somthings
+processor uut(halt,reset,clk); // instantiate the verilog module
+initial 
+begin
+	$dumpfile;
+	$dumpfile(0,uut);
+	//------------
+	#20 reset = 0;
+	#20 reset = 1;
+	//------------
 end
 endmodule
-<<<<<<< HEAD
-*/
-/*
-=======
-
-
-
-//===========================TEST BENCH====================================
->>>>>>> 20b1aafb76b02c6e7af26428e443dac5de67d65c
-module processor_tb;
-//------------------------
-	reg reset = 0,clk = 0;
-//------------------------
-	wire halt;
-	always begin #20 clk = ~clk end; // clock change every 20 somthings
-	processor uut(halt,reset,clk); // instantiate the verilog module
-	initial begin;
-		$dumpfile;
-		$dumpfile(0,uut);
-		//------------
-		#20 reset = 0;
-		#20 reset = 1;
-		//------------
-	end
-endmodule
-//==========================END TEST BENCH=================================
-//N.S
-
