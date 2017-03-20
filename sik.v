@@ -51,6 +51,7 @@
 
 // -----------------------------State #'s-----------------------------------------
 `define Start 4'd10
+`define Start1 4'd11
 
 
 // -----------------------------Main Processor Module-----------------------------
@@ -65,28 +66,37 @@ reg `WORDSIZE stack `REGSIZE;
 reg `WORDSIZE mainmem `MEMSIZE;
 reg [3:0] preReg;
 reg preLoaded;
+reg torf;
+reg `WORDSIZE ir;
 //reg `REGSIZE dest;
 //reg `REGSIZE src;
 
 
+// Non-blocking assignments are used because the order of the assignments does
+// not matter
 always @(reset)
 begin
 	halt <= 0;
 	pc <= 0;
 	s <= `Start;
 	preLoaded <= 0;
+	torf = 0;
 end
 
+// Blocking assignments are used to ensure the order of assignments is linear
 always @(posedge clk)
 begin
 	case (s)
 		`Start:
 			begin
 			end
+		`Start1:
+			begin
+			end
 		`NoArg: 
 			begin
 				//reg `WORDSIZE ArgOp = s `ARG;
-				case (s `ARG)
+				case (ir `ARG)
 					`Add:
 						begin
 							/*
@@ -171,6 +181,14 @@ begin
 						end
 					`Store:
 						begin
+							/*
+							dest = sp - 1;
+							src = sp;
+							sp = sp - 1;
+							mainmem[stack[d]] = stack[s];
+							*/
+						   mainmem[stack[sp-1]] = stack[sp];
+						   sp = sp -1;
 						end
 					`Sub:
 						begin
@@ -190,6 +208,13 @@ begin
 						end
 					`Test:
 						begin
+							/*
+							src = sp;
+							sp = sp -1;
+							torf = (stack[src] != 0);
+							*/
+							torf = (stack[sp] != 0);
+							sp = sp -1;
 						end
 					`Xor:
 						begin
@@ -208,39 +233,126 @@ begin
 			end
 		`Call: 
 			begin
+				/*
+				dest = sp+1;
+				sp = sp+1;
+				regfile[dest] = pc +1;
+				*/
+			  	stack[sp+1] = pc +1;
+				sp = sp + 1;
+				if (preLoaded)
+				begin
+					pc = {preReg, ir `ARG};
+					preLoaded = 0;
+				end
+				else
+				begin
+					pc = (pc & 16'hf000) | (ir `ARG & 16'h0fff);
+				end
+				preLoaded = 0;
 			end
 		`Get: 
 			begin
+				/*
+				dest = sp + 1;
+				src = sp - s `ARG;
+				sp = sp + 1;
+				stack[dest] = stack[src];
+				*/
+				stack[sp + 1] = stack[sp - ir `ARG];
+				sp = sp + 1;
 			end
 		`JumpF: 
 			begin
+				if(~torf)
+				begin
+					if(preLoaded)
+					begin
+						pc = {preReg, ir `ARG};
+						preLoaded = 0;
+					end
+					else
+					begin
+						pc = (pc & 16'hf000) | (ir `ARG & 16'h0fff);
+					end
+				end
 			end
 		`Jump: 
 			begin
+				if(preLoaded)
+				begin
+					pc = {preReg, ir `ARG};
+					preLoaded = 0;
+				end
+				else
+				begin
+					pc = (pc & 16'hf000) | (ir `ARG & 16'h0fff);
+				end
 			end
 		`JumpT: 
 			begin
+				if(torf)
+				begin
+					if(preLoaded)
+					begin
+						pc = {preReg, ir `ARG};
+						preLoaded = 0;
+					end
+					else
+					begin
+						pc = (pc & 16'hf000) | (ir `ARG & 16'h0fff);
+					end
+				end
 			end
 		`Pop: 
 			begin
+				if(ir `ARG > sp)
+				begin
+					sp = 0;
+				end
+				else
+				begin
+					sp = sp - ir `ARG;
+				end
 			end
 		`Pre: 
 			begin
-				preReg = (s `ARG) >> 12;
+				preReg = (ir `ARG) >> 12;
 				preLoaded = 1;
 				s = `Start;
 			end
 		`Push: 
 			begin
+				/*
+				dest = sp+1;
+				sp = sp+1;
+				*/
+				if(preLoaded)
+				begin 
+					stack[sp + 1] = {preReg, ir `ARG};
+					preLoaded = 0;
+				end
+				else
+				begin
+					stack[sp + 1] = ir `ARG;
+				end
+				sp = sp + 1;
 			end
 		`Put: 
 			begin
+				/*
+				dest = sp - ir `ARG;
+				src = sp;
+				stack[dest] = stack[src];
+				*/
+				stack[sp - ir `ARG] = stack[sp];
 			end
 		default: halt = 1;	
 	endcase
 end
 endmodule
 
+/*
 module testbench;
 reg reset = 0;
 reg clk = 0;
@@ -251,7 +363,7 @@ initial begin
 	$dumpfile
 end
 endmodule
-
+*/
 /*
 module processor_tb;
 	reg [15:0] A;
