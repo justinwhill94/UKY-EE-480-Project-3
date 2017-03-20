@@ -1,35 +1,37 @@
-Add := 0:4 1:12
-And := 0:4 2:12
-Dup := 0:4 4:12
-Load := 0:4 8:12
-Lt := 0:4 16:12
-Or := 0:4 32:12
-Ret := 0:4 64:12
-Store := 0:4 128:12
-Sub := 0:4 256:12
-Sys := 0:4 512:12
-Test := 0:4 1024:12
-Xor:= 0:4 2048:12
+Add := 1:4 1:12
+And := 1:4 2:12
+Dup := 1:4 4:12
+Load := 1:4 8:12
+Lt := 1:4 16:12
+Or := 1:4 32:12
+Ret := 1:4 64:12
+Store := 1:4 128:12
+Sub := 1:4 256:12
+Sys := 1:4 512:12
+Test := 1:4 1024:12
+Xor:= 1:4 2048:12
 
-Call .immed ?((. & 0xf000) == (.immed & 0xf000)) := 1:4 (.immed & 0x0fff):12
-Call .immed := 1:4 (.immed & 0x0fff):12 7:4 ((.immed & 0xf000)>>12):12
+Call .immed ?((. & 0xf000) == (.immed & 0xf000)) := 2:4 (.immed & 0x0fff):12
+Call .immed := 8:4 ((.immed & 0xf000)>>12):12 2:4 (.immed & 0x0fff):12
 
-Get .immed := 2:4 .immed:12
+Get .immed := 3:4 .immed:12
 
-JumpF .immed ?((. & 0xf000) == (.immed & 0xf000)) := 3:4 (.immed & 0x0fff):12
-JumpF .immed := 7:4 ((.immed & 0xf000) >> 12):12 3:4 (.immed & 0x0fff):12
+JumpF .immed ?((. & 0xf000) == (.immed & 0xf000)) := 4:4 (.immed & 0x0fff):12
+JumpF .immed := 8:4 ((.immed & 0xf000) >> 12):12 4:4 (.immed & 0x0fff):12
 
-Jump .immed ?((. & 0xf000) == (.immed & 0xf000)) := 4:4 (.immed & 0x0fff):12
-Jump .immed := 7:4 ((.immed & 0xf000) >> 12):12 4:4 (.immed & 0x0fff):12
+Jump .immed ?((. & 0xf000) == (.immed & 0xf000)) := 5:4 (.immed & 0x0fff):12
+Jump .immed := 8:4 ((.immed & 0xf000) >> 12):12 5:4 (.immed & 0x0fff):12
 
-JumpT .immed ?((. & 0xf000) == (.immed & 0xf000)) := 5:4 (.immed & 0x0fff):12
-JumpT .immed := 7:4 ((.immed & 0xf000) >> 12):12 5:4 (.immed & 0x0fff):12
+JumpT .immed ?((. & 0xf000) == (.immed & 0xf000)) := 6:4 (.immed & 0x0fff):12
+JumpT .immed := 8:4 ((.immed & 0xf000) >> 12):12 6:4 (.immed & 0x0fff):12
 
-Pop .immed := 6:4 .immed:12
-Pre .immed := 7:4 ((.immed & 0xf000) >> 12):12
-Push .immed := 7:4 ((.immed & 0xf000) >> 12):12 8:4 (.immed & 0x0fff):12
-Put .immed := 9:4 .immed:12
+Pop .immed := 7:4 .immed:12
+Pre .immed := 8:4 ((.immed & 0xf000) >> 12):12
+Push .immed ?(((.immed & 0xf800) == 0xf800) || ((.immed & 0xf800) == 0))	:= 9:4 .immed:12
+Push .immed	:= 8:4 0:8 (.immed >> 12):4 9:4 .immed:12
+Put .immed := 10:4 .immed:12
 
 .segment .text 8 0x1000000 0 .VMEM
 .segment .data 8 0x1000000 0 .VMEM
 .const 0 .lowfirst ; was wrong endian
+

@@ -1,0 +1,8 @@
+Push 16
+Push 24
+Add
+Push 40
+And
+Test
+Sys
+

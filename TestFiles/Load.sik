@@ -1,0 +1,9 @@
+Push 15
+Push 8
+Load
+Test
+And 
+JumpT 7
+Sys
+Sys
+

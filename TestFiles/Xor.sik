@@ -1,0 +1,10 @@
+Push 12
+Push 7
+Xor 
+Push 9
+And
+Test
+JumpT 8
+Sys
+Sys
+

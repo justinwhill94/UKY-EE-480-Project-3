@@ -1,0 +1,101 @@
+Push 1
+Push 1 
+Add
+Push 2
+And
+Test
+JumpT 8
+Sys
+Push 2
+Dup
+Push 2
+And
+Test
+JumpT 15
+Sys
+Push 15
+Push 5
+Push 3
+Get 2
+Push 5
+And
+Test
+JumpT 24
+Sys
+Push 0
+Load 
+Push 36865
+And
+Test
+JumpT 31
+Sys
+Push 15
+Push 25
+Lt
+Push 1
+And
+Test
+JumpT 39
+Sys
+Push 13
+Push 6
+Or
+Push 15
+And
+Test
+JumpT 47
+Sys
+Push 5
+Push 15
+Pop 1
+Push 5
+And
+Test
+JumpT 55
+Sys
+Push 15
+Push 5
+Sub
+Push 10
+And
+Test
+JumpT 62
+Sys
+Push 15
+Push 11
+Xor
+Push 4
+And
+Test
+JumpT 71
+Sys
+Call 73
+Sys
+Push 0
+Test
+JumpF 77
+Sys
+Jump 79
+Sys
+Push 47213
+Push 7
+Or
+Push 47215
+And
+Test
+JumpT 87
+Sys
+Push 15
+Put 1
+And
+Test 
+JumpT 93
+Sys
+Push 96
+Ret
+Sys
+Push 0
+Push 4608
+Store
+Jump 0
+Sys

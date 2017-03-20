@@ -1,0 +1,9 @@
+Push 47213
+Push 7
+Or
+Push 47215
+And
+Test
+JumpT 8
+Sys
+Sys

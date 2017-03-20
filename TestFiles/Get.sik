@@ -1,0 +1,9 @@
+Push 15
+Push 5
+Get 1
+Push 15
+And
+Test
+JumpT 8
+Sys
+Sys

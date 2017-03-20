@@ -1,0 +1,9 @@
+Push 12
+Push 18
+Add
+Push 30
+And 
+Test
+JumpF 8
+Sys
+Sys

@@ -6,36 +6,31 @@
 
 // -----------------------------Size parameters----------------------------------
 
-//N.S.
-`define WORDSIZE [15:0]
-`define OPCODE [15:12]
-`define ARG [11:0]
-//`define DST [11:6]
-`define REGSIZE [255:0]
-`define MEMSIZE [65535:0]
-`define SPSIZE [7:0]      //stack pointer, i point to one of 256 words in the MEM
-`define PCSIZE [15:0]     // i point to one of 16 bits in the addressed WORD
-//`define TorF          // im a 0bit boolean that keeps track of conditionals (TRUE OR FALSE)
-//`define PRE [3:0]     // like in P2 i alow for 16 bit imeds
-//`define isPREld       // im a 1 bit bolean keeping track if PRE is loaded
-`define STATESIZE [3:0]
-//N.S
+`define WORDSIZE [15:0]		// Stack Register Size
+`define OPCODE [15:12]		// Instruction OpCode Location
+`define ARG [11:0]			// Instruction Argument location
+`define REGSIZE [255:0]		// Stack Size
+`define MEMSIZE [65535:0]	// Main Memory Size
+`define SPSIZE [7:0]      	// Stack Pointer Size
+`define PCSIZE [15:0]     	// Process Counter Size
+`define STATESIZE [3:0]		// State Variable Size
 
 // -----------------------------Opcode Values-------------------------------------
 
-`define NoArg 4'd0
-`define Call 4'd1
-`define Get 4'd2
-`define JumpF 4'd3
-`define Jump 4'd4
-`define JumpT 4'd5
-`define Pop 4'd6
-`define Pre 4'd7
-`define Push 4'd8
-`define Put 4'd9
+`define NoArg 4'd1
+`define Call 4'd2
+`define Get 4'd3
+`define JumpF 4'd4
+`define Jump 4'd5
+`define JumpT 4'd6
+`define Pop 4'd7
+`define Pre 4'd8
+`define Push 4'd9
+`define Put 4'd10
 
 // ----------------------------No Arg Opcode---------------------------------------
-
+//	These values are contained in the instruction argument and act as
+//	a secondary opcode
 `define Add 12'd1
 `define And 12'd2
 `define Dup 12'd4
@@ -50,8 +45,7 @@
 `define Xor 12'd2048
 
 // -----------------------------State #'s-----------------------------------------
-`define Start 4'd10
-`define Start1 4'd11
+`define Start 4'd11
 
 
 // -----------------------------Main Processor Module-----------------------------
@@ -59,6 +53,7 @@ module processor(halt, reset, clk);
 output reg halt;
 input reset, clk;
 
+// -----------------------------Initialize Processor Registers--------------------
 reg `PCSIZE pc =0;
 reg `SPSIZE sp = 0;
 reg `STATESIZE s = `Start;
@@ -68,8 +63,8 @@ reg [3:0] preReg;
 reg preLoaded;
 reg torf;
 reg `WORDSIZE ir;
-//reg `REGSIZE dest;
-//reg `REGSIZE src;
+reg `WORDSIZE dest;
+reg `WORDSIZE src;
 
 
 // Non-blocking assignments are used because the order of the assignments does
@@ -86,126 +81,150 @@ begin
 end
 
 // Blocking assignments are used to ensure the order of assignments is linear
+
+// This state machine implements the processor, where each state implements
+// a specific operation.
 always @(posedge clk)
 begin
 	case (s)
+		// Fetch the next instruction from memory
 		`Start:
 			begin
 				ir = mainmem[pc];
 				s = ir `OPCODE;
 				pc = pc+1;
 			end
-		`Start1:
-			begin
-			end
+		// Perform the specified NoArg operation
 		`NoArg: 
 			begin
 				//reg `WORDSIZE ArgOp = s `ARG;
+				
+				// Use the argument as a secondary opcode which specifies
+				// which instruction to perform
 				case (ir `ARG)
 					`Add:
 						begin
-							/*
+							
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
 							stack[dest] = stack[dest] + stack[src];
-							*/
+							s = `Start;
+							/*
 							stack[sp-1] = stack[sp-1] + stack[sp];
 							sp = sp-1;
 							s = `Start;
+							*/
 						end
 					`And:
 						begin
-							/*
+							
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
 							stack[dest] = stack[dest] & stack[src];
-							*/
+							s = `Start;
+							/*
 							stack[sp-1] = stack[sp-1] & stack[sp];
 							sp = sp-1;
 							s = `Start;
+							*/
 						end
 					`Dup:
 						begin
-							/*
+							
 							dest = sp+1;
 							src = sp;
 							sp = sp+1;
 							stack[dest] = stack[src];
-							*/
+							s = `Start;
+							/*
 							stack[sp + 1] = stack[sp];
 							sp = sp + 1;
 							s = `Start;
+							*/
 						end
 					`Load:
 						begin
-							/*
+							
 							dest = sp;
 							sp = sp + 1;
 							stack[dest] = mainmem[stack[dest]];
-							*/
+							s = `Start;
+							/*
 							stack[sp] = mainmem[stack[sp]];
 							sp = sp+1;
 							s = `Start;
+							*/
 						end
 					`Lt:
 						begin
-							/*
+							
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
 							stack[dest] = stack[dest] < stack[src];
-							*/
+							s = `Start;
+							/*
 						   stack[sp-1] = stack[sp-1] < stack[sp];
 						   sp = sp-1;
 						   s = `Start;
+						   */
 						end
 					`Or:
 						begin
-							/*
+							
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
 							stack[dest] = stack[dest] | stack[src];
-							*/
+							s = `Start;
+							/*
 						   stack[sp -1] = stack[sp -1] | stack[sp];
 						   sp = sp -1;
 						   s = `Start;
+						   */
 						end
 					`Ret:
 						begin
-							/*
+							
 							src = sp;
 							sp = sp-1;
 							pc = stack[src];
-							*/
+							s = `Start;
+							/*
 						   pc = stack[sp];
 						   sp = sp-1;
 						   s = `Start;
+						   */
 						end
 					`Store:
 						begin
-							/*
+							
 							dest = sp - 1;
 							src = sp;
 							sp = sp - 1;
-							mainmem[stack[d]] = stack[s];
-							*/
+							mainmem[stack[dest]] = stack[src];
+							s = `Start;
+							/*
 						   mainmem[stack[sp-1]] = stack[sp];
 						   sp = sp -1;
+						   s = `Start;
+						   */
 						end
 					`Sub:
 						begin
-							/*
+							
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
 							stack[dest] = stack[dest] - stack[src];
-							*/
+							s = `Start;
+							/*
 						   stack[sp -1] = stack[sp -1] - stack[sp];
 						   sp = sp-1;
 						   s = `Start;
+						   */
 						end
 					`Sys:
 						begin
@@ -213,38 +232,43 @@ begin
 						end
 					`Test:
 						begin
-							/*
+							
 							src = sp;
 							sp = sp -1;
 							torf = (stack[src] != 0);
-							*/
+							s = `Start;
+							/*
 							torf = (stack[sp] != 0);
 							sp = sp -1;
+							*/
 						end
 					`Xor:
 						begin
-							/*
+							
 							dest = sp-1;
 							src = sp;
 							sp = sp-1;
 							stack[dest] = stack[dest] ^ stack[src];
-							*/
+							s = `Start;
+							/*
 						   stack[sp -1] = stack[sp -1] ^ stack[sp];
 						   sp = sp-1;
 						   s = `Start;
+						   */
 						end
 				endcase
-
 			end
+
 		`Call: 
 			begin
-				/*
+				
 				dest = sp+1;
 				sp = sp+1;
-				regfile[dest] = pc +1;
-				*/
+				stack[dest] = pc +1;
+				/*
 			  	stack[sp+1] = pc +1;
 				sp = sp + 1;
+				*/
 				if (preLoaded)
 				begin
 					pc = {preReg, ir `ARG};
@@ -255,17 +279,20 @@ begin
 					pc = (pc & 16'hf000) | (ir `ARG & 16'h0fff);
 				end
 				preLoaded = 0;
+				s = `Start;
 			end
 		`Get: 
 			begin
-				/*
+				
 				dest = sp + 1;
 				src = sp - s `ARG;
 				sp = sp + 1;
 				stack[dest] = stack[src];
-				*/
+				s = `Start;
+				/*
 				stack[sp + 1] = stack[sp - ir `ARG];
 				sp = sp + 1;
+				*/
 			end
 		`JumpF: 
 			begin
@@ -281,6 +308,7 @@ begin
 						pc = (pc & 16'hf000) | (ir `ARG & 16'h0fff);
 					end
 				end
+				s = `Start;
 			end
 		`Jump: 
 			begin
@@ -293,6 +321,7 @@ begin
 				begin
 					pc = (pc & 16'hf000) | (ir `ARG & 16'h0fff);
 				end
+				s = `Start;
 			end
 		`JumpT: 
 			begin
@@ -308,6 +337,7 @@ begin
 						pc = (pc & 16'hf000) | (ir `ARG & 16'h0fff);
 					end
 				end
+				s = `Start;
 			end
 		`Pop: 
 			begin
@@ -319,6 +349,7 @@ begin
 				begin
 					sp = sp - ir `ARG;
 				end
+				s = `Start;
 			end
 		`Pre: 
 			begin
@@ -328,51 +359,54 @@ begin
 			end
 		`Push: 
 			begin
-				/*
+				
 				dest = sp+1;
 				sp = sp+1;
-				*/
 				if(preLoaded)
 				begin 
-					stack[sp + 1] = {preReg, ir `ARG};
+					stack[dest] = {preReg, ir `ARG};
 					preLoaded = 0;
 				end
 				else
 				begin
-					stack[sp + 1] = ir `ARG;
+					stack[dest] = ir `ARG;
 				end
-				sp = sp + 1;
+				s = `Start;
 			end
 		`Put: 
 			begin
-				/*
+				
 				dest = sp - ir `ARG;
 				src = sp;
 				stack[dest] = stack[src];
-				*/
-				stack[sp - ir `ARG] = stack[sp];
+				s = `Start;
+				
+				//stack[sp - ir `ARG] = stack[sp];
 			end
 		default: halt = 1;	
 	endcase
 end
 endmodule
 
+// -----------------------------Processor Testbench Module-------------------------
 module processor_tb;
 wire halt;
 reg reset;
 reg clk;
-always 
-begin 
-	#20 clk = ~clk; 
-end // clock change every 20 somthings
+
 processor uut(halt,reset,clk); // instantiate the verilog module
+
+// Initially reset the processor
 initial 
 begin
 	$dumpfile;
-	$dumpfile(0,uut);
+	$dumpvars(0,uut);
 	//------------
-	#20 reset = 0;
-	#20 reset = 1;
+	clk = 0;
+	#5 reset = 0;
+	#5 reset = 1;
 	//------------
+	while(~halt)
+		#5 clk = ~ clk;
 end
 endmodule
